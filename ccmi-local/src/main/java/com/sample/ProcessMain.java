@@ -1,6 +1,7 @@
 package com.sample;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
@@ -17,52 +18,58 @@ import org.kie.api.builder.helper.KieModuleDeploymentHelper;
 import org.kie.api.builder.model.KieBaseModel;
 import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.builder.model.KieSessionModel;
+import org.kie.api.command.Command;
+import org.kie.api.command.KieCommands;
+import org.kie.api.event.rule.AfterMatchFiredEvent;
+import org.kie.api.event.rule.DebugAgendaEventListener;
+import org.kie.api.event.rule.DebugRuleRuntimeEventListener;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.kie.api.io.Resource;
+import org.kie.api.runtime.ExecutionResults;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.StatelessKieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeEnvironmentBuilder;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.runtime.manager.RuntimeManagerFactory;
 import org.kie.api.task.TaskService;
 import org.kie.api.task.model.TaskSummary;
+import org.kie.api.event.rule.AgendaEventListener;
 
 public class ProcessMain {
 	
 	private static String drlString = "";
-
+	
 	public static void main(String[] args) {
 		KieServices ks = KieServices.Factory.get();
 
 		createKieFileSystemAndBuild(ks);
 		createKjarAndDeployToMaven("kjarGroupId", "kjarArtifactId");
 		
-		KieContainer kContainer = ks.getKieClasspathContainer();
-		KieBase kbase = kContainer.getKieBase("addkbase");
+		List<Object> facts = new ArrayList<Object>();
+		facts.add(true);
 		
-		RuntimeManager manager = createRuntimeManager(kbase);
-		RuntimeEngine engine = manager.getRuntimeEngine(null);
-		KieSession ksession = engine.getKieSession();
-		TaskService taskService = engine.getTaskService();
-
-		ksession.startProcess("sample.process");
-
-		// let john execute Task 1
-		List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("john", "en-UK");
-		TaskSummary task = list.get(0);
-		System.out.println("John is executing task " + task.getName());
-		taskService.start(task.getId(), "john");
-		taskService.complete(task.getId(), "john", null);
-
-		// let mary execute Task 2
-		list = taskService.getTasksAssignedAsPotentialOwner("mary", "en-UK");
-		task = list.get(0);
-		System.out.println("Mary is executing task " + task.getName());
-		taskService.start(task.getId(), "mary");
-		taskService.complete(task.getId(), "mary", null);
-
-		manager.disposeRuntimeEngine(engine);
-		System.exit(0);
+		KieContainer kContainer = ks.getKieClasspathContainer();
+		
+		StatelessKieSession ksession = kContainer.newStatelessKieSession("AddDefaultSession");
+		
+		List<Command<?>> commands = new ArrayList<Command<?>>();
+		KieCommands commandFactory = ks.getCommands();
+		commands.add(commandFactory.newInsertElements(facts));
+		commands.add(commandFactory.newStartProcess("sample.process"));
+		commands.add(commandFactory.newFireAllRules());
+		
+		ksession.addEventListener(new DefaultAgendaEventListener() {
+		    public void afterMatchFired(AfterMatchFiredEvent event) {
+		        // intentionally left blank
+		    	System.out.println(event.getMatch().getRule().getName());
+		    }
+		});
+		
+		
+		ExecutionResults results = ksession.execute(commandFactory.newBatchExecution(commands));
+		System.out.println("results :" + results);
 	}
 
 	private static RuntimeManager createRuntimeManager(KieBase kbase) {
