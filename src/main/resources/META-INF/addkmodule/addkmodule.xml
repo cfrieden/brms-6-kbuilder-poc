@@ -2,10 +2,6 @@
 <kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://jboss.org/kie/6.0.0/kmodule">
 
-	<kbase name="kbase" packages="com.sample">
-		<ksession name="DefaultSession" type="stateless" default="false" />
-	</kbase>
-
 	<kbase name="addkbase" packages="com.sample">
 		<ksession name="AddDefaultSession" type="stateless" default="false" />
 	</kbase>
