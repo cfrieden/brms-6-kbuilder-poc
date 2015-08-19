@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.rhc</groupId>
+  <artifactId>ccmi-knowledge</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>kjar</packaging>
+
+  <properties>
+  	<drools.version>6.2.0.Final-redhat-4</drools.version>
+  	<jbpm.version>6.2.0.Final-redhat-4</jbpm.version>
+  	<currentVersion>${project.version}</currentVersion>
+  </properties>
+
+	<dependencies>
+		
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.kie</groupId>
+				<artifactId>kie-maven-plugin</artifactId>
+				<version>${drools.version}</version>
+				<extensions>true</extensions>
+				<dependencies>
+				<dependency>
+					<groupId>org.jbpm</groupId>
+					<artifactId>jbpm-bpmn2</artifactId>
+					<version>${jbpm.version}</version>
+					<exclusions>
+					<exclusion>
+						<groupId>joda-time</groupId>
+						<artifactId>joda-time</artifactId>
+					</exclusion>
+					</exclusions>
+				</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+
+	</build>
+</project>
