@@ -38,14 +38,14 @@ public class ProcessMain {
 		createKjarAndDeployToMaven("kjarGroupId", "kjarArtifactId");
 		
 		KieContainer kContainer = ks.getKieClasspathContainer();
-		KieBase kbase = kContainer.getKieBase("genkbase");
+		KieBase kbase = kContainer.getKieBase("addkbase");
 		
 		RuntimeManager manager = createRuntimeManager(kbase);
 		RuntimeEngine engine = manager.getRuntimeEngine(null);
 		KieSession ksession = engine.getKieSession();
 		TaskService taskService = engine.getTaskService();
 
-		ksession.startProcess("com.sample.bpmn.hello");
+		ksession.startProcess("sample.process");
 
 		// let john execute Task 1
 		List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("john", "en-UK");

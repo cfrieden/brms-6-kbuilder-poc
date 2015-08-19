@@ -6,8 +6,4 @@
 		<ksession name="DefaultSession" type="stateless" default="false" />
 	</kbase>
 
-	<kbase name="addkbase" packages="com.sample">
-		<ksession name="AddDefaultSession" type="stateless" default="false" />
-	</kbase>
-
 </kmodule>
