@@ -33,10 +33,11 @@ public class ProcessMain {
 
 	public static void main(String[] args) {
 		KieServices ks = KieServices.Factory.get();
-		KieContainer kContainer = ks.getKieClasspathContainer();
 
 		createKieFileSystemAndBuild(ks);
 		createKjarAndDeployToMaven("kjarGroupId", "kjarArtifactId");
+		
+		KieContainer kContainer = ks.getKieClasspathContainer();
 		KieBase kbase = kContainer.getKieBase("genkbase");
 		
 		RuntimeManager manager = createRuntimeManager(kbase);
@@ -119,6 +120,4 @@ public class ProcessMain {
 
 	}
 
-	private static void createDefaultKieBase(FluentKieModuleDeploymentHelper helper) {
-	}
 }
