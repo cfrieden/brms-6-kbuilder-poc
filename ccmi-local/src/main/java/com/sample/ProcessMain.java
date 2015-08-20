@@ -27,7 +27,16 @@ import org.kie.api.runtime.StatelessKieSession;
 
 public class ProcessMain {
 	
-	private static String drlString = "";
+	private static String drlString = "rule \"Goodbye World\"\n"+
+"ruleflow-group \"ruleflow1\"\n"+
+"no-loop\n"+
+"when\n"+
+"	Object()\n"+
+"then\n"+
+"	System.out.println(\"GoodBye World!\");\n"+
+"end";
+	
+	private static ReleaseId rid;
 	
 	public static void main(String[] args) {
 		KieServices ks = KieServices.Factory.get();
@@ -39,8 +48,11 @@ public class ProcessMain {
 		facts.add(true);
 		
 		KieContainer kContainer = ks.getKieClasspathContainer();
+		System.out.println(ks.getRepository().getKieModule(rid));
+		//ks.getKieClasspathContainer().updateToVersion(rid);
+		//System.out.print
 		
-		StatelessKieSession ksession = kContainer.newStatelessKieSession("AddDefaultSession");
+		StatelessKieSession ksession = kContainer.newStatelessKieSession("GeneratedSession");
 		
 		List<Command<?>> commands = new ArrayList<Command<?>>();
 		KieCommands commandFactory = ks.getCommands();
@@ -64,7 +76,7 @@ public class ProcessMain {
 		KieFileSystem kFile = ks.newKieFileSystem();
 		Resource kResource = ks.getResources().newReaderResource(new StringReader(drlString));
 		kResource.setTargetPath("/tempDrl.drl");
-		ReleaseId rid = ks.newReleaseId("com.rhc", "combined-kjar", "0.0.1-SNAPSHOT");
+		rid = ks.newReleaseId("com.rhc", "combined-kjar", "0.0.2-SNAPSHOT");
 		kFile.generateAndWritePomXML(rid);
 		kFile.write(kResource);  
 
@@ -91,7 +103,7 @@ public class ProcessMain {
 		
 		if (kBuilder.getResults().hasMessages(Message.Level.ERROR)) {
 			for (Message message : kBuilder.getResults().getMessages(Message.Level.ERROR)) {
-				System.out.println(message.toString());
+				System.out.println("blarg" +message.toString());
 			}
 		}
 		return time;
