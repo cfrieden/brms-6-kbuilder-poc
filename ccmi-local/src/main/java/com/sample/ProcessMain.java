@@ -10,8 +10,6 @@ import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.KieModule;
 import org.kie.api.builder.Message;
 import org.kie.api.builder.ReleaseId;
-import org.kie.api.builder.helper.FluentKieModuleDeploymentHelper;
-import org.kie.api.builder.helper.KieModuleDeploymentHelper;
 import org.kie.api.builder.model.KieBaseModel;
 import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.builder.model.KieSessionModel;
