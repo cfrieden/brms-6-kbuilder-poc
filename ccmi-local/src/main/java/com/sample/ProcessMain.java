@@ -38,11 +38,10 @@ public class ProcessMain {
 	public static void main(String[] args) {
 		KieServices ks = KieServices.Factory.get();
 		
-		drlStringInit();
 		createKieFileSystemAndBuild(ks);
 		
 		// Add commands to ksession
-		KieContainer kContainer = ks.getKieClasspathContainer();
+		KieContainer kContainer = ks.newKieContainer(rid);
 
 		System.out.println(ks.getRepository().getKieModule(rid));
 		//ks.getKieClasspathContainer().updateToVersion(rid);
@@ -104,10 +103,6 @@ public class ProcessMain {
 			}
 		}
 		return time;
-	}
-	
-	private static void drlStringInit() {
-		drlString = "nice.";
 	}
 	
 }
