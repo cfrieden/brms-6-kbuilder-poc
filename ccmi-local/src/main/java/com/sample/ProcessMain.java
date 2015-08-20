@@ -1,6 +1,5 @@
 package com.sample;
 
-import java.io.File;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +10,6 @@ import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.KieModule;
 import org.kie.api.builder.Message;
 import org.kie.api.builder.ReleaseId;
-import org.kie.api.builder.helper.FluentKieModuleDeploymentHelper;
-import org.kie.api.builder.helper.KieModuleDeploymentHelper;
 import org.kie.api.builder.model.KieBaseModel;
 import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.builder.model.KieSessionModel;
@@ -40,20 +37,20 @@ public class ProcessMain {
 	
 	public static void main(String[] args) {
 		KieServices ks = KieServices.Factory.get();
-
+		
+		drlStringInit();
 		createKieFileSystemAndBuild(ks);
-		//createKjarAndDeployToMaven("kjarGroupId", "kjarArtifactId");
 		
-		List<Object> facts = new ArrayList<Object>();
-		facts.add(true);
-		
+		// Add commands to ksession
 		KieContainer kContainer = ks.getKieClasspathContainer();
+
 		System.out.println(ks.getRepository().getKieModule(rid));
 		//ks.getKieClasspathContainer().updateToVersion(rid);
 		//System.out.print
-		
 		StatelessKieSession ksession = kContainer.newStatelessKieSession("GeneratedSession");
 		
+		List<Object> facts = new ArrayList<Object>();
+		facts.add(true);
 		List<Command<?>> commands = new ArrayList<Command<?>>();
 		KieCommands commandFactory = ks.getCommands();
 		commands.add(commandFactory.newInsertElements(facts));
@@ -66,6 +63,7 @@ public class ProcessMain {
 		    }
 		});
 		
+		// Fire rules
 		ExecutionResults results = ksession.execute(commandFactory.newBatchExecution(commands));
 		System.out.println("results :" + results);
 	}
@@ -81,7 +79,6 @@ public class ProcessMain {
 		kFile.write(kResource);  
 
 		// Create KieModuleModel and add generated kmodule.xml
-		//Resource ex1Res = ks.getResources().newFileSystemResource(new File("/home/bepark/Cigna/ccmi-local/ccmi-local-knowledge/target/classes"));
 		KieModule kOldModule =ks.getRepository().getKieModule(ks.newReleaseId("com.rhc","ccmi-knowledge","0.0.1-SNAPSHOT") );
 		
 		KieModuleModel kModuleModel = ks.newKieModuleModel();
@@ -109,56 +106,8 @@ public class ProcessMain {
 		return time;
 	}
 	
-	private static String createKjarAndDeployToMaven(String kjarGroupId, String kjarArtifactId) {
-		// Create ModuleDeploymentHelper
-		String time = Long.toString(System.currentTimeMillis());
-		FluentKieModuleDeploymentHelper helper = KieModuleDeploymentHelper.newFluentInstance();
-		  helper.addDependencies("com.rhc:ccmi-knowledge:0.0.1-SNAPSHOT");
-		// Create KModule
-		KieModuleModel kModuleModel = helper.getKieModuleModel();
-		
-        KieBaseModel kBaseModel = kModuleModel.newKieBaseModel( "genkbase" )
-        		.setDefault(false);
-        KieSessionModel kSessionModel = kBaseModel.newKieSessionModel( "GeneratedSession" )
-        		.setType(KieSessionModel.KieSessionType.STATELESS)
-        		.setDefault(false);
-      
-        // Create KJAR and deploy to maven
-		helper.setGroupId(kjarGroupId)
-			.setArtifactId(kjarArtifactId)
-			.setVersion(time);
-
-		helper.createKieJarAndDeployToMaven();
-
-		return time;
+	private static void drlStringInit() {
+		drlString = "nice.";
 	}
 	
-//    public static File getFile(String exampleName) {
-//        File folder = new File("ccmi-local").getAbsoluteFile();
-//        File exampleFolder = null;
-//        while (folder != null) {
-//            exampleFolder = new File(folder, exampleName);
-//            if (exampleFolder.exists()) {
-//                break;
-//            }
-//            exampleFolder = null;
-//            folder = folder.getParentFile();
-//        }
-//
-//        if (exampleFolder != null) {
-//            File targetFolder = new File(exampleFolder, "target");
-//            if (!targetFolder.exists()) {
-//                throw new RuntimeException("The target folder does not exist, please build project " + exampleName + " first");
-//            }
-//
-//            for (String str : targetFolder.list()) {
-//                if (str.startsWith(exampleName) && !str.endsWith("-sources.jar") && !str.endsWith("-tests.jar") && !str.endsWith("-javadoc.jar")) {
-//                    return new File(targetFolder, str);
-//                }
-//            }
-//        }
-//
-//        throw new RuntimeException("The target jar does not exist, please build project " + exampleName + " first");
-//    }
-
 }
