@@ -1,5 +1,6 @@
 package com.sample;
 
+import java.io.File;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class ProcessMain {
 		KieServices ks = KieServices.Factory.get();
 
 		createKieFileSystemAndBuild(ks);
-		createKjarAndDeployToMaven("kjarGroupId", "kjarArtifactId");
+		//createKjarAndDeployToMaven("kjarGroupId", "kjarArtifactId");
 		
 		List<Object> facts = new ArrayList<Object>();
 		facts.add(true);
@@ -51,7 +52,6 @@ public class ProcessMain {
 		    }
 		});
 		
-		
 		ExecutionResults results = ksession.execute(commandFactory.newBatchExecution(commands));
 		System.out.println("results :" + results);
 	}
@@ -64,8 +64,22 @@ public class ProcessMain {
 		kResource.setTargetPath("/tempDrl.drl");
 		kFile.write(kResource);  
 
+		// Create KieModuleModel and add generated kmodule.xml
+		Resource ex1Res = ks.getResources().newFileSystemResource(new File("/home/bepark/Cigna/ccmi-local/ccmi-local-knowledge/target/classes"));
+		
+		KieModuleModel kModuleModel = ks.newKieModuleModel();
+		KieBaseModel kBaseModel = kModuleModel.newKieBaseModel("genkbase")
+		        .setDefault(false)
+		        .addInclude("addkbase");
+		KieSessionModel kSessionModel = kBaseModel.newKieSessionModel("GeneratedSession")
+		        .setDefault(false)
+		        .setType(KieSessionModel.KieSessionType.STATELESS);
+
+		kFile.writeKModuleXML(kModuleModel.toXML());
+
         // Build builder
 		KieBuilder kBuilder = ks.newKieBuilder(kFile);
+		kBuilder.setDependencies(ex1Res);
 		kBuilder.buildAll(); // where does this go to?
 		//and do what with the kie builder?
 		
@@ -86,7 +100,7 @@ public class ProcessMain {
 		KieModuleModel kModuleModel = helper.getKieModuleModel();
 		
         KieBaseModel kBaseModel = kModuleModel.newKieBaseModel( "genkbase" )
-        		.setDefault(false).addInclude("addKbase");
+        		.setDefault(false);
         KieSessionModel kSessionModel = kBaseModel.newKieSessionModel( "GeneratedSession" )
         		.setType(KieSessionModel.KieSessionType.STATELESS)
         		.setDefault(false);
@@ -99,7 +113,34 @@ public class ProcessMain {
 		helper.createKieJarAndDeployToMaven();
 
 		return time;
-
 	}
+	
+//    public static File getFile(String exampleName) {
+//        File folder = new File("ccmi-local").getAbsoluteFile();
+//        File exampleFolder = null;
+//        while (folder != null) {
+//            exampleFolder = new File(folder, exampleName);
+//            if (exampleFolder.exists()) {
+//                break;
+//            }
+//            exampleFolder = null;
+//            folder = folder.getParentFile();
+//        }
+//
+//        if (exampleFolder != null) {
+//            File targetFolder = new File(exampleFolder, "target");
+//            if (!targetFolder.exists()) {
+//                throw new RuntimeException("The target folder does not exist, please build project " + exampleName + " first");
+//            }
+//
+//            for (String str : targetFolder.list()) {
+//                if (str.startsWith(exampleName) && !str.endsWith("-sources.jar") && !str.endsWith("-tests.jar") && !str.endsWith("-javadoc.jar")) {
+//                    return new File(targetFolder, str);
+//                }
+//            }
+//        }
+//
+//        throw new RuntimeException("The target jar does not exist, please build project " + exampleName + " first");
+//    }
 
 }
