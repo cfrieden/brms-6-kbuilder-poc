@@ -8,7 +8,9 @@ import java.util.List;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
 import org.kie.api.builder.Message;
+import org.kie.api.builder.ReleaseId;
 import org.kie.api.builder.helper.FluentKieModuleDeploymentHelper;
 import org.kie.api.builder.helper.KieModuleDeploymentHelper;
 import org.kie.api.builder.model.KieBaseModel;
@@ -62,10 +64,13 @@ public class ProcessMain {
 		KieFileSystem kFile = ks.newKieFileSystem();
 		Resource kResource = ks.getResources().newReaderResource(new StringReader(drlString));
 		kResource.setTargetPath("/tempDrl.drl");
+		ReleaseId rid = ks.newReleaseId("com.rhc", "combined-kjar", "0.0.1-SNAPSHOT");
+		kFile.generateAndWritePomXML(rid);
 		kFile.write(kResource);  
 
 		// Create KieModuleModel and add generated kmodule.xml
-		Resource ex1Res = ks.getResources().newFileSystemResource(new File("/home/bepark/Cigna/ccmi-local/ccmi-local-knowledge/target/classes"));
+		//Resource ex1Res = ks.getResources().newFileSystemResource(new File("/home/bepark/Cigna/ccmi-local/ccmi-local-knowledge/target/classes"));
+		KieModule kOldModule =ks.getRepository().getKieModule(ks.newReleaseId("com.rhc","ccmi-knowledge","0.0.1-SNAPSHOT") );
 		
 		KieModuleModel kModuleModel = ks.newKieModuleModel();
 		KieBaseModel kBaseModel = kModuleModel.newKieBaseModel("genkbase")
@@ -76,10 +81,11 @@ public class ProcessMain {
 		        .setType(KieSessionModel.KieSessionType.STATELESS);
 
 		kFile.writeKModuleXML(kModuleModel.toXML());
+		
 
         // Build builder
 		KieBuilder kBuilder = ks.newKieBuilder(kFile);
-		kBuilder.setDependencies(ex1Res);
+		kBuilder.setDependencies(kOldModule);
 		kBuilder.buildAll(); // where does this go to?
 		//and do what with the kie builder?
 		
