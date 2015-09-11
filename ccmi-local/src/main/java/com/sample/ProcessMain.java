@@ -24,8 +24,11 @@ import org.kie.api.runtime.StatelessKieSession;
 
 public class ProcessMain {
 	
-	private static String drlString = "rule \"Goodbye World\"\n"+
-"ruleflow-group \"ruleflow1\"\n"+
+	private static String drlString = "package com.rhc.demo;\n"
+			+ "import java.math.BigDecimal;\n"
+			+ "import org.joda.time.DateTime;\n"
+			+ "rule \"Goodbye World\"\n"+
+"ruleflow-group \"Assemble\"\n"+
 "no-loop\n"+
 "when\n"+
 "	Object()\n"+
@@ -35,17 +38,22 @@ public class ProcessMain {
 	
 	private static ReleaseId rid;
 	
-	public static void main(String[] args) {
+	public void main() {
+		long time = System.currentTimeMillis();
+		System.out.println(0);
 		KieServices ks = KieServices.Factory.get();
 		
+		System.out.println(System.currentTimeMillis()-time);
 		createKieFileSystemAndBuild(ks);
+		long buildTime = System.currentTimeMillis()-time;
+		System.out.println("Took" +Long.toString(System.currentTimeMillis()-time) + " ms to build all");
 		
 		// Add commands to ksession
 		KieContainer kContainer = ks.newKieContainer(rid);
 
 		System.out.println(ks.getRepository().getKieModule(rid));
 		//ks.getKieClasspathContainer().updateToVersion(rid);
-		//System.out.print
+		//System.out.printks.newKieContainer(rid);
 		StatelessKieSession ksession = kContainer.newStatelessKieSession("GeneratedSession");
 		
 		List<Object> facts = new ArrayList<Object>();
@@ -56,15 +64,13 @@ public class ProcessMain {
 		commands.add(commandFactory.newStartProcess("sample.process"));
 		commands.add(commandFactory.newFireAllRules());
 		
-		ksession.addEventListener(new DefaultAgendaEventListener() {
-		    public void afterMatchFired(AfterMatchFiredEvent event) {
-		    	System.out.println(event.getMatch().getRule().getName());
-		    }
-		});
-		
 		// Fire rules
 		ExecutionResults results = ksession.execute(commandFactory.newBatchExecution(commands));
 		System.out.println("results :" + results);
+		
+		String timeSpent = Long.toString(buildTime);
+		System.out.println("time took to build:"+timeSpent);
+		
 	}
 	
 	private static String createKieFileSystemAndBuild(KieServices ks){
@@ -79,12 +85,14 @@ public class ProcessMain {
 
 		// Create KieModuleModel and add generated kmodule.xml
 		KieModule kOldModule =ks.getRepository().getKieModule(ks.newReleaseId("com.rhc","ccmi-knowledge","0.0.1-SNAPSHOT") );
+		KieModule kOldModule2 =ks.getRepository().getKieModule(ks.newReleaseId("com.rhc","ccmi-knowledge2","0.0.1-SNAPSHOT") );
+		KieModule kOldModule3 =ks.getRepository().getKieModule(ks.newReleaseId("com.rhc","ccmi-knowledge3","0.0.1-SNAPSHOT") ); 
 		
 		KieModuleModel kModuleModel = ks.newKieModuleModel();
 		KieBaseModel kBaseModel = kModuleModel.newKieBaseModel("genkbase")
 		        .setDefault(false)
-		        .addInclude("addkbase");
-		KieSessionModel kSessionModel = kBaseModel.newKieSessionModel("GeneratedSession")
+		        .addInclude("addkbase").addInclude("addkbase2").addInclude("addkbase3");
+			kBaseModel.newKieSessionModel("GeneratedSession")
 		        .setDefault(false)
 		        .setType(KieSessionModel.KieSessionType.STATELESS);
 
@@ -93,7 +101,7 @@ public class ProcessMain {
 
         // Build builder
 		KieBuilder kBuilder = ks.newKieBuilder(kFile);
-		kBuilder.setDependencies(kOldModule);
+		kBuilder.setDependencies(kOldModule, kOldModule2, kOldModule3);
 		kBuilder.buildAll(); // where does this go to?
 		//and do what with the kie builder?
 		

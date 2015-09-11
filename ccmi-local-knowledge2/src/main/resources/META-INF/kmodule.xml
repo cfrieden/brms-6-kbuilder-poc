@@ -2,8 +2,8 @@
 <kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://jboss.org/kie/6.0.0/kmodule">
 
-	<kbase name="addkbase" includes="addkbase2,addkbase3">
-		<ksession name="AddDefaultSession" type="stateless" default="false" />
+	<kbase name="addkbase2" >
+		<ksession name="AddDefaultSession2" type="stateless" default="false" />
 	</kbase>
 
 </kmodule>
