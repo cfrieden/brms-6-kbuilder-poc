@@ -3,7 +3,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.rhc</groupId>
-  <artifactId>ccmi-knowledge</artifactId>
+  <artifactId>ccmi-knowledge2</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>kjar</packaging>
 
@@ -14,16 +14,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   </properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.rhc</groupId>
-			<artifactId>ccmi-knowledge2</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.rhc</groupId>
-			<artifactId>ccmi-knowledge3</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 		
 	</dependencies>
 

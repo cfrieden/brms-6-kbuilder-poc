@@ -17,7 +17,7 @@
     <!-- nodes -->
     <startEvent id="_1" name="StartProcess"  isInterrupting="true">
     </startEvent>
-    <businessRuleTask id="_jbpm-unique-0" name="Rule" g:ruleFlowGroup="ruleflow1" >
+    <businessRuleTask id="_jbpm-unique-0" name="Gather Ingrediants" g:ruleFlowGroup="gather ingredients" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -28,31 +28,47 @@
     <endEvent id="_jbpm-unique-1" name="End" >
         <terminateEventDefinition />
     </endEvent>
+    <businessRuleTask id="_jbpm-unique-2" name="Create Burrito" g:ruleFlowGroup="Assemble" >
+      <ioSpecification>
+        <inputSet>
+        </inputSet>
+        <outputSet>
+        </outputSet>
+      </ioSpecification>
+    </businessRuleTask>
 
     <!-- connections -->
     <sequenceFlow id="_1-_jbpm-unique-0" sourceRef="_1" targetRef="_jbpm-unique-0" />
-    <sequenceFlow id="_jbpm-unique-0-_jbpm-unique-1" sourceRef="_jbpm-unique-0" targetRef="_jbpm-unique-1" />
+    <sequenceFlow id="_jbpm-unique-2-_jbpm-unique-1" sourceRef="_jbpm-unique-2" targetRef="_jbpm-unique-1" />
+    <sequenceFlow id="_jbpm-unique-0-_jbpm-unique-2" sourceRef="_jbpm-unique-0" targetRef="_jbpm-unique-2" />
 
   </process>
 
   <bpmndi:BPMNDiagram>
     <bpmndi:BPMNPlane bpmnElement="sample.process" >
       <bpmndi:BPMNShape bpmnElement="_1" >
-        <dc:Bounds x="16" y="16" width="48" height="48" />
+        <dc:Bounds x="10" y="37" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-0" >
-        <dc:Bounds x="140" y="32" width="80" height="48" />
+        <dc:Bounds x="144" y="39" width="80" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-1" >
-        <dc:Bounds x="313" y="35" width="48" height="48" />
+        <dc:Bounds x="538" y="43" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-2" >
+        <dc:Bounds x="335" y="38" width="80" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="_1-_jbpm-unique-0" >
-        <di:waypoint x="40" y="40" />
-        <di:waypoint x="180" y="56" />
+        <di:waypoint x="34" y="61" />
+        <di:waypoint x="184" y="63" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-0-_jbpm-unique-1" >
-        <di:waypoint x="180" y="56" />
-        <di:waypoint x="337" y="59" />
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-2-_jbpm-unique-1" >
+        <di:waypoint x="375" y="62" />
+        <di:waypoint x="562" y="67" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-0-_jbpm-unique-2" >
+        <di:waypoint x="184" y="63" />
+        <di:waypoint x="375" y="62" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
